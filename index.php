@@ -61,7 +61,7 @@
             <li><a href="#">Home</a></li>
             <li>Basic</li>
           </ol>
-          <h1>Welcome to an OpenShift Application! We thank you for taking out the time to attend this session.</h1>
+          <h1>Welcome to an OpenShift Application! Thank you for taking out the time to attend this session.</h1>
           <p>The purpose of this application is to demonstrate several interesting features about OpenShift. We hope you enjoy it!</p>
         </div>
       </div>
