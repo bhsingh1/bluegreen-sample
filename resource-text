@@ -1,0 +1,23 @@
+kind: ResourceQuota
+apiVersion: v1
+metadata:
+  name: example
+  namespace: scaling
+  selfLink: /api/v1/namespaces/scaling/resourcequotas/example
+  uid: cdd1990b-b937-42c4-91cf-e3be05820284
+  resourceVersion: '1622631'
+  creationTimestamp: '2020-05-10T20:28:08Z'
+spec:
+  hard:
+    secrets: '50'
+    services.loadbalancers: '2'
+    persistentvolumeclaims: '2'
+    replicationcontrollers: '10'
+    requests.memory: 4Gi
+    pods: '10'
+    requests.storage: 10Gi
+    limits.cpu: '10'
+    limits.memory: 8Gi
+    configmaps: '10'
+    services: '10'
+    requests.cpu: '6'
