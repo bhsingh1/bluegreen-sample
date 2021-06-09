@@ -1,0 +1,35 @@
+Limit Range
+
+spec:
+  limits:
+    - type: Pod
+      max:
+        cpu: '4'
+        memory: 12Gi
+      min:
+        cpu: 100m
+        memory: 256Mi
+      maxLimitRequestRatio:
+        cpu: '10'
+    - type: Container
+      max:
+        cpu: '4'
+        memory: 6Gi
+      default:
+        cpu: '1'
+        memory: 1536Mi
+      defaultRequest:
+        cpu: 100m
+        memory: 256Mi
+    - type: openshift.io/Image
+      max:
+        storage: 1Gi
+    - type: openshift.io/ImageStream
+      max:
+        openshift.io/image-tags: '20'
+        openshift.io/images: '30'
+    - type: PersistentVolumeClaim
+      max:
+        storage: 10Gi
+      min:
+        storage: 1Gi
