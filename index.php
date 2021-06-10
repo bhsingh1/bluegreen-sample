@@ -61,8 +61,8 @@
             <li><a href="#">Home</a></li>
             <li>Basic</li>
           </ol>
-          <h1>Welcome to this session on containers and OpenShift! Thank you for taking out the time to attend this session.</h1>
-          <p>The purpose of this application is to demonstrate several interesting features about containers. We hope you enjoy it!</p>
+          <h1>Welcome to this session on OpenShift! We thank you for taking out the time to attend this session.</h1>
+          <p>The purpose of this application is to demonstrate several interesting features about OpenShift capabilities. We hope you enjoy it!</p>
         </div>
       </div>
       <div class="row">
