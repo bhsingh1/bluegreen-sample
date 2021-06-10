@@ -1,1 +1,7 @@
-6/TaeS3sKVYVkPvhwAqHtpzf4Gv3cmLZcbX9wdXascb+J1omkGXYQWcsRRCbWTsS
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bhawaniudaysingh-pull-secret
+data:
+  .dockerconfigjson: ewogICJhdXRocyI6IHsKICAgICJxdWF5LmlvIjogewogICAgICAiYXV0aCI6ICJZbWhoZDJGdWFYVmtZWGx6YVc1bmFEb3JSaTlrWTIxS05UZHJXREUwUlhWaWIzcHJjRTFrVUVkbmFIaHVUMEUzTlROM00wYzVOV1EyTUZoaU4yTndXRmx6S3pRdlZEZEJNVkJSTjNOVFYydHMiLAogICAgICAiZW1haWwiOiAiIgogICAgfQogIH0KfQ==
+type: kubernetes.io/dockerconfigjson
