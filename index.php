@@ -61,8 +61,8 @@
             <li><a href="#">Home</a></li>
             <li>Basic</li>
           </ol>
-          <h1>Welcome you all to this brief overview on OpenShift! Red Hat would like to thank you all for taking out the time and we hope you all are doing well.</h1>
-          <p>The purpose of this application is to demonstrate several interesting features about OpenShift capabilities. Hope you enjoy it!</p>
+          <h1>Welcome you all to this Modern Application Development Workshop on OpenShift! Red Hat would like to thank you all for taking out the time and we hope you all are doing well.</h1>
+          <p>The purpose of this workshop is to demonstrate several interesting features about OpenShift and it's capabilities. Hope you enjoy it!</p>
         </div>
       </div>
       <div class="row">
