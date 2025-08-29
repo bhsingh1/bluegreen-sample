@@ -61,7 +61,7 @@
             <li><a href="#">Home</a></li>
             <li>Basic</li>
           </ol>
-          <h1>Hello! We hope you are doing well. This is a sample application deployed on OpenShift on AWS!</h1>
+          <h1>Hello! We hope you are doing well. This is a sample application deployed on OpenShift!</h1>
           <p>The purpose of this small demonstration is to demonstrate features about OpenShift. Hope you enjoy it!</p>
         </div>
       </div>
