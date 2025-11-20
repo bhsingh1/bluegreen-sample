@@ -1,0 +1,315 @@
+Edit with the Docs app
+Make tweaks, leave comments, and share with others to edit at the same time.
+NO THANKSUSE THE APP
+
+OpenShift Disconnected - Mirror Registry Setup
+
+Download Mirroring Tools
+OpenShift provides two primary tools that are used to create disconnected clusters:
+
+1. oc-mirror - A tool to help you download:
+
+The OpenShift installation images (a specific set of container images)
+Additional container images such as docker.io/wordpress
+Individual Operators like the Web Terminal, the DISA STIG Compliance Operator, etc…​
+Helm charts like csi-driver-nfs
+2. mirror-registry - An image registry that serves container images to the OpenShift nodes
+
+This is a smaller & streamlined version of the Red Hat Quay Image Registry
+We will also download two additional tools that will be used later on the highside system.
+
+3. openshift-install: The OpenShift Installer
+
+4. oc: The OpenShift command line interface
+
+
+
+Please begin by changing your directory to /mnt/low-side-data/
+Then use the following commands to download and extract the required tools.
+
+oc-mirror: A plugin to the oc command for mirroring OpenShift releases, apps / Operators, additional images, and Helm charts.
+
+cd /mnt/low-side-data/
+
+curl -L -o oc-mirror.tar.gz https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.18.24/o
+
+c-mirror.tar.gz
+
+tar -xzf oc-mirror.tar.gz
+
+rm -f oc-mirror.tar.gz
+
+chmod +x oc-mirror
+
+sudo cp -v oc-mirror /bin
+
+
+(https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.20.0/oc-mirror.tar.gz)
+
+
+
+
+
+
+Mirror-registry: a small-scale Red Hat Quay registry designed for mirroring
+
+
+curl -L -o mirror-registry.tar.gz https://mirror.openshift.com/pub/cgw/mirror-registry/2.0.7/mirror-registry-amd64.tar.gz
+
+
+
+Openshift-install: The OpenShift Installer
+
+
+curl -L -o openshift-install.tar.gz https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.18.24/openshift-install-linux.tar.gz
+
+tar -xzf openshift-install.tar.gz openshift-install
+
+rm -f openshift-install.tar.gz
+
+
+
+oc: The OpenShift command line interface
+
+
+curl -L -o oc.tar.gz https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.18.24/openshift-client-linux.tar.gz
+
+tar -xzf oc.tar.gz oc
+
+rm -f oc.tar.gz
+
+sudo cp -v oc /bin
+
+
+
+To cross-check:
+
+ls -1 /mnt/low-side-data/
+
+
+Sample Output:
+
+mirror-registry.tar.gz
+
+oc
+
+oc-mirror
+
+openshift-install
+
+
+
+Mirroring the OpenShift installation images
+Now that the mirroring and installation tools have been downloaded and extracted, it’s time to put the oc-mirror to work! Let’s start with a brief overview of using oc-mirror:
+
+1. Provide access credentials (a pull secret)
+
+Credentials are required to download OpenShift installation images
+2. Create an ImageSetConfiguration YAML file that describes:
+
+What to download (OpenShift itself, an Operator, and an image)
+What versions (e.g. everything between 4.18.24 and 4.18.25)
+Where to store the downloaded content
+3. Run oc-mirror with the YAML file
+
+This process downloads ~25 GB of data and takes about 15 minutes in this workshop environment
+We will run the download in a separate (tmux) terminal so that you can keep working.
+
+A pull secret is JSON-formated data that combines authentication information for one or more Image Registries into a single file. You can find your own pull secret in the Red Hat Hybrid Cloud Console.
+
+This workshop provides a generic pull secret in order to avoid delays logging in to the Hybrid Cloud Console and avoid frustrations using vi, nano or emacs.
+
+More information about pull secrets can be found in the Appendix.
+
+
+
+Please begin by copying the provided pull secret into the default location.
+
+
+mkdir -v $HOME/.docker
+
+cp -v $HOME/pull-secret-example.json $HOME/.docker/config.json
+
+
+Output
+
+mkdir: created directory '/home/lab-user/.docker'
+
+'/home/lab-user/pull-secret-example.json' -> '/home/lab-user/.docker/config.json'
+
+
+Then create an ImageSetConfiguration YAML file that tells oc-mirror what to downloaded. A template of this file is provided for you. To save time and storage, the template downloads:
+
+Two specific versions of OpenShift
+One optional app / Operator, the Web Terminal Operator
+One additional image, registry.redhat.io/rhel8/support-tools
+No Helm charts will be download
+
+You can find a more detailed example of an ImageSetConfig in this GitHub Gist. Please don’t make any changes to the provided ImageSetConfig because it will increase the amount of time required to download and transfer the content.
+
+
+Imageset-config.yaml
+
+
+cat << EOF > /mnt/low-side-data/imageset-config.yaml
+
+---
+
+kind: ImageSetConfiguration
+
+apiVersion: mirror.openshift.io/v1alpha2
+
+storageConfig:
+
+  local:
+
+    path: ./
+
+mirror:
+
+  platform:
+
+    channels:
+
+    - name: stable-4.18
+
+      type: ocp
+
+      minVersion: 4.18.24
+
+      maxVersion: 4.18.25
+
+
+  operators:
+
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.18
+
+    packages:
+
+    - name: web-terminal
+
+      channels:
+
+      - name: fast
+
+
+  additionalImages:
+
+  - name: registry.redhat.io/rhel8/support-tools
+
+
+  helm: {}
+
+EOF
+
+
+It takes ~15 minutes to download the installation images in this workshop environment.
+
+Please run the next oc-mirror command in a tmux session. This will allow you to move on to the next section while oc-mirror downloads ~25 GB of data.
+
+
+cd /mnt/low-side-data
+
+oc-mirror --config imageset-config.yaml file:///mnt/low-side-data
+
+
+
+
+Change to the high side transfer directory (/mnt/high-side-data) and extract the mirror-registry files.
+
+
+cd /mnt/high-side-data
+
+tar -xzvf mirror-registry.tar.gz
+
+
+Sample Output
+
+image-archive.tar
+
+execution-environment.tar
+
+mirror-registry
+
+sqlite3.tar
+
+
+The automation that installs and configures the mirror-registry takes ~5 minutes to complete. The only option that we will provide is one to set the password for the init user to discopass.
+
+
+./mirror-registry install --initPassword discopass
+
+
+ /  \ /  \     ______   _    _     __   __   __
+
+ / /\ / /\ \   /  __  \ | |  | |   /  \  \ \ / /
+
+/ /  / /  \ \  | |  | | | |  | |  / /\ \  \   /
+
+\ \  \ \  / /  | |__| | | |__| | / ____ \  | |
+
+ \ \/ \ \/ /   \_  ___/  \____/ /_/    \_\ |_|
+
+  \__/ \__/      \ \__
+
+                  \___\ by Red Hat
+
+ Build, Store, and Distribute your Containers
+
+
+INFO[2025-10-08 23:53:10] Install has begun
+
+
+...
+
+INFO[2025-10-08 23:57:30] Quay installed successfully, config data is stored in ~/quay-install
+
+INFO[2025-10-08 23:57:30] Quay is available at https://ip-10-0-56-192.ap-southeast-1.compute.internal:8443 with credentials (init, discopass)
+
+
+Wait for the mirror-registry to be installed.
+
+
+The mirror-registry installer creates its own self-signed TLS certificate that is not trusted by anything, not even the highside system where it was installed.
+
+
+The procedure to trust the mirror-registry’s self-signed TLS certificate is simple.  
+
+
+The mirror-registry install options allow users to provide their own certificate, if they were issued one, using the --sslCert option.
+
+
+Copy the Root Certificate Authority file (rootCA.pem) that the mirror-registry created into the Red Hat Enterprise Linux CA trust directory. Then run the update-ca-trust command.
+
+
+sudo cp -v $HOME/quay-install/quay-rootCA/rootCA.pem /etc/pki/ca-trust/source/anchors/
+
+
+sudo update-ca-trust
+
+
+
+Log in to the mirror-registry
+After the mirror-registry TLS certificate has been trusted, log in with podman.
+
+
+The username is init and the password discopass.
+
+
+podman login -u init -p discopass $(hostname):8443
+
+Login Succeeded!
+
+The podman login command creates an authentication file / pull secret at $XDG_RUNTIME_DIR/containers/auth.json, for example: /run/user/1001/containers/auth.json.
+
+
+The oc-mirror command looks for pull secrets in multiple locations:
+
+$HOME/.docker/config.json (created on the lowside jump system)
+$XDG_RUNTIME_DIR/containers/auth.json (created on the highside system)
+
+
+rsync -avP /mnt/low-side-data/ highside:/mnt/high-side-data/
+
+
+After the oc-mirror command has completed, use rsync on the jump system to copy the installation content into /mnt/high-side-data on the highside system.
