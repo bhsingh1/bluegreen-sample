@@ -1,0 +1,70 @@
+---
+# ====================================================================================================================
+# ImageSetConfiguration for OpenShift 4.20 Disconnected Mirror
+# WARNING: Mirroring 'full: true' for all catalogs requires 500GB - 1TB+ of storage and significant mirroring time.
+# ====================================================================================================================
+apiVersion: mirror.openshift.io/v1alpha2
+kind: ImageSetConfiguration
+
+storageConfig:
+  local:
+    # Stores all mirror artifacts (metadata and image layers/archives) in the current working directory.
+    path: ./
+
+mirror:
+
+  # ----------------------------
+  # 1. OpenShift Platform 4.20
+  # ----------------------------
+  platform:
+    channels:
+      - name: stable-4.20
+        type: ocp
+        minVersion: 4.20.0
+        # maxVersion is omitted to pull the latest 4.20 image available in the stable-4.20 channel.
+        # CRITICAL FIX: 'graph: true' is required for disconnected in-place cluster upgrades (OSUS).
+        graph: true
+
+  # ----------------------------
+  # 2. Operator Catalogs (Full)
+  # ----------------------------
+  operators:
+    # Red Hat Operators
+    - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.20
+      full: true # Mirrors all packages in the catalog.
+
+    # Certified (ISV) Operators
+    - catalog: registry.redhat.io/redhat/certified-operator-index:v4.20
+      full: true # Mirrors all packages in the catalog.
+
+    # Community Operators
+    - catalog: registry.redhat.io/redhat/community-operator-index:v4.20
+      full: true # Mirrors all packages in the catalog.
+
+  # ----------------------------
+  # 3. Additional Images
+  # ----------------------------
+  additionalImages:
+    # Good practice to include support and utility images for cluster maintenance.
+    - name: registry.redhat.io/rhel8/support-tools
+
+  # ----------------------------
+  # 4. Helm Charts + Repositories
+  # ----------------------------
+  helm:
+    repos:
+      - name: redhat-helm
+        url: https://charts.openshift.io/
+
+      - name: certified-helm
+        url: https://registry.redhat.io/chartrepo/openshift4/
+
+      - name: community-helm
+        url: https://charts.openshift.io/community/
+
+    charts:
+      # These charts will be mirrored from the repositories defined above.
+      - name: redhat-helm/cluster-logging
+      - name: redhat-helm/openshift-gitops
+      - name: certified-helm/datagrid-operator
+      - name: community-helm/nginx
