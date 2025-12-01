@@ -74,3 +74,12 @@ mirror:
 
 # This connects to Red Hat VIA your proxy and saves the certificates
 openssl s_client -showcerts -connect api.openshift.com:443 -proxy 172.16.24.44:3128 </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > proxy-ca.pem
+
+
+1:11
+
+# Replace 'username' and 'password' with your actual proxy credentials
+openssl s_client -showcerts -connect api.openshift.com:443 \
+  -proxy username:password@172.16.24.44:3128 </dev/null \
+  | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > proxy-ca.pem
+
