@@ -68,3 +68,9 @@ mirror:
       - name: redhat-helm/openshift-gitops
       - name: certified-helm/datagrid-operator
       - name: community-helm/nginx
+
+
+
+
+# This connects to Red Hat VIA your proxy and saves the certificates
+openssl s_client -showcerts -connect api.openshift.com:443 -proxy 172.16.24.44:3128 </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > proxy-ca.pem
