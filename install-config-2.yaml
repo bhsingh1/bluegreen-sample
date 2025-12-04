@@ -1,0 +1,55 @@
+apiVersion: v1
+baseDomain: gmr.in
+compute: 
+- hyperthreading: Enabled 
+  name: worker
+  replicas: 0 
+controlPlane: 
+  hyperthreading: Enabled 
+  name: master
+  replicas: 3 
+metadata:
+  name:  ocpvirtdc1
+networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14 
+    hostPrefix: 23 
+  networkType: Calico 
+  serviceNetwork: 
+  - 172.30.0.0/16
+platform:
+  none: {} 
+fips: false 
+pullSecret: '{"auths":{"mirror-registry.gmr.in:8443": {"auth": "YWRtaW46R29vZ2xlQDIwMjAj"}}}' 
+sshKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAYWETA0nJyGtI56zZa3KWFlXRhpV/CQ4EU9kz8Hln69 root@mirror-registry.gmr.in'
+additionalTrustBundle: | 
+  -----BEGIN CERTIFICATE-----
+  MIID6DCCAtCgAwIBAgIUHCmPs0u5aVJaV7vB+rCgdJrILX4wDQYJKoZIhvcNAQEL
+  BQAwcDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAlZBMREwDwYDVQQHDAhOZXcgWW9y
+  azENMAsGA1UECgwEUXVheTERMA8GA1UECwwIRGl2aXNpb24xHzAdBgNVBAMMFm1p
+  cnJvci1yZWdpc3RyeS5nbXIuaW4wHhcNMjUwMjI3MTQwMzM0WhcNMjcxMjE4MTQw
+  MzM0WjBwMQswCQYDVQQGEwJVUzELMAkGA1UECAwCVkExETAPBgNVBAcMCE5ldyBZ
+  b3JrMQ0wCwYDVQQKDARRdWF5MREwDwYDVQQLDAhEaXZpc2lvbjEfMB0GA1UEAwwW
+  bWlycm9yLXJlZ2lzdHJ5Lmdtci5pbjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+  AQoCggEBAIdPoKH9mOc6zLcqZnnsWHsDE95b5k1OpMlJ8TzwOoqP1TE0oAWE/fMe
+  CWFJH84Uo6rOBgw8NyELehw+sqBXcLFahp10c9U78kqbYvWIs1bTA7y5fLZIV/BQ
+  vt0Urdtzm3h8u/OEAjXs6C0fXwb8XuZYvufgTF2NNyzvz2aezvhbErEz9r0T56oe
+  m9FE+bRLKNCLls5m8M+WVHK2bTrE2hSPGc2g8w/wb3KWe9mcuA845Vvkogw2h/+l
+  7Au7HM9I1U/WYjx1s4IZdtyN5jVhki3hGEypT/XJG1HIcoZOm2SbPK/qerbAwdZC
+  AP8lT/m01p2Trh8NQuKSF/5/UflpcXsCAwEAAaN6MHgwCwYDVR0PBAQDAgLkMBMG
+  A1UdJQQMMAoGCCsGAQUFBwMBMCEGA1UdEQQaMBiCFm1pcnJvci1yZWdpc3RyeS5n
+  bXIuaW4wEgYDVR0TAQH/BAgwBgEB/wIBATAdBgNVHQ4EFgQULNz79eScfMBte8J9
+  cm4lhRRkXVAwDQYJKoZIhvcNAQELBQADggEBAEvTmv+Q+3gWCNhi6d1OlJd47I5v
+  y0T+l1+96xkTXeyaKKbWhbvgQAJqENbfMrPO3Zu7/cOXBCukc9l5nRwcqavSPWHh
+  s2cUTxHmm3ZZhk4uUngQeAulHem0DJl1Ca/acyz2wtsxjS2Yfat7zs9vU8hZG1VU
+  mcyEp9XwOLfFeLhZMV1nKQUH4N1NprNjrEfmeGyQEh118TgSkcJHX1iABRoCowqc
+  JJ6GxerEetXODFFUzoMEClS2eLnPeMa/ytXXvL0FEf8mhLOUSv1OuEGj/Ntxrfbi
+  pjZNMvSxRWgBtpicRkwIV/bu2iLjqMIDVyt5x8+x6dAmvD/0uzCbofUf2KY=
+  -----END CERTIFICATE-----
+imageContentSources: 
+- mirrors:
+  - mirror-registry.gmr.in:8443/openshift/release
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+- mirrors:
+  - mirror-registry.gmr.in:8443/openshift/release-images
+  source: quay.io/openshift-release-dev/ocp-release
