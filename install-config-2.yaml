@@ -21,7 +21,7 @@ platform:
   none: {} 
 fips: false 
 pullSecret: '{"auths":{"mirror-registry.abc.in:8443": {"auth": "YWRtaW46R29vZ2xlQDIwMjAj"}}}' 
-sshKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAYWETA0nJyGtI56zZa3KWFlXRhpV/CQ4EU9kz8Hln69 root@mirror-registry.gmr.in'
+sshKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAYWETA0nJyGtI56zZa3KWFlXRhpV/CQ4EU9kz8Hln69 root@mirror-registry.abc.in'
 additionalTrustBundle: | 
   -----BEGIN CERTIFICATE-----
   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -48,10 +48,10 @@ additionalTrustBundle: |
   -----END CERTIFICATE-----
 imageContentSources: 
 - mirrors:
-  - mirror-registry.gmr.in:8443/openshift/release
+  - mirror-registry.abc.in:8443/openshift/release
   source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
 - mirrors:
-  - mirror-registry.gmr.in:8443/openshift/release-images
+  - mirror-registry.abc.in:8443/openshift/release-images
   source: quay.io/openshift-release-dev/ocp-release
 
 
