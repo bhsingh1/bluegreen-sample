@@ -53,3 +53,103 @@ imageContentSources:
 - mirrors:
   - mirror-registry.gmr.in:8443/openshift/release-images
   source: quay.io/openshift-release-dev/ocp-release
+
+
+
+#----------------------------------------#
+
+# 1. Generate Kubernetes manifests (optional tweaking happens here)
+openshift-install create manifests --dir=ocp-install
+
+# 2. Prevent pods from scheduling on masters (if desired)
+sed -i 's/mastersSchedulable: true/mastersSchedulable: false/g' ocp-install/manifests/cluster-scheduler-02-config.yml
+
+# 3. Generate Ignition files
+openshift-install create ignition-configs --dir=ocp-install
+
+
+Note: You will now have bootstrap.ign, master.ign, and worker.ign in the directory.
+
+Host the Ignition Files
+The VMs need to download these files when they boot.
+Copy the .ign files to your Bastion's web server directory (e.g., /var/www/html/ignition/).
+Ensure they are reachable: curl http://10.x.y.z:8080/ignition/bootstrap.ign
+
+
+Download and Transfer the RHCOS ISO
+Download the Red Hat Enterprise Linux CoreOS (RHCOS) Live ISO matching your OpenShift version.
+Transfer this ISO to your hypervisor environment (e.g., upload it to the ESXi Datastore).
+
+Create the Virtual Machines (1 Bootstrap, 3 Masters, 3 Workers) on your hypervisor.
+Attach the RHCOS ISO to the virtual (CD/DVD) drive of every VM and set them to boot from it.
+
+Network: Attach all VMs to the same networ series. 10.X.Y.z network switch.
+
+Storage: Ensure disks meet minimum requirements (e.g., 120/150GB thin provisioned).
+
+VM Booting
+Booting the Nodes with Kernel Parameters
+You must boot each VM and interrupt the GRUB boot menu to inject the static IP configuration and the URL to the ignition file.
+
+
+Step 1: Boot the Bootstrap Node
+1. Power on the Bootstrap VM and quickly press TAB (or E depending on machine type) at the RHCOS boot menu to edit the kernel arguments.
+
+2. Append the network and ignition parameters:
+
+
+coreos.inst.install_dev=sda
+coreos.inst.ignition_url=http://10.x.y.z:8080/ignition/bootstrap.ign
+ip=10.a.b.c::10.p.q.r:255.255.255.0:bootstrap.test.XXX.in:ens192:none
+nameserver=10.x.y.z
+
+10.x.y.z - Bastiyon
+10.a.b.c - Bootstrap
+10.p.q.r - Gateway IP address for your subnet (10.p.q.0/24)
+
+
+Repeat for Master & Worker and make sure to change the ignition files & the correct machine IPs. Boot the respective machines.
+
+
+
+
+#While installation is happening, 
+monitor the Bootstrap Process
+​From the Bastion, monitor the cluster creation:
+
+openshift-install wait-for bootstrap-complete --dir=ocp-install --log-level=info
+
+
+Once the API is up and the masters have formed etcd quorum, this command will report success. You can safely power off and delete the Bootstrap VM at this stage.
+
+Approve Certificate Signing Requests (CSRs)
+The worker nodes will attempt to join the cluster but require manual approval.
+Export the Kubeconfig: 
+
+export KUBECONFIG=~/ocp-install/auth/kubeconfig
+
+View pending requests: 
+oc get csr
+
+Approve them: 
+
+oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs oc adm certificate approve
+
+
+
+Wait for Installation to Complete
+
+openshift-install wait-for install-complete --dir=ocp-install --log-level=info
+
+
+Post-Installation
+
+Apply ImageDigestMirrorSet
+To ensure the cluster continues to redirect all future registry.redhat.io requests to the local Quay registry, apply the generated YAML from oc-mirror:
+
+
+oc apply -f oc-mirror-workspace/results-xxx/imageDigestMirrorSet.yaml
+
+
+
+
