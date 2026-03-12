@@ -20,7 +20,7 @@ networking:
 platform:
   none: {} 
 fips: false 
-pullSecret: '{"auths":{"mirror-registry.abc.in:8443": {"auth": "YWRtaW46R29vZ2xlQDIwMjAj"}}}' 
+pullSecret: '{"auths":{"mirror-registry.abc.in:8443": {"auth": "XXXXXXXXXXXXXXXXXX"}}}' 
 sshKey: 'ssh-abcdefZZZZ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxXXXXXXXXX/YYYYYYYYYYYYYY root@mirror-registry.abc.in'
 additionalTrustBundle: | 
   -----BEGIN CERTIFICATE-----
