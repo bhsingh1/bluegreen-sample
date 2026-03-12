@@ -21,7 +21,7 @@ platform:
   none: {} 
 fips: false 
 pullSecret: '{"auths":{"mirror-registry.abc.in:8443": {"auth": "YWRtaW46R29vZ2xlQDIwMjAj"}}}' 
-sshKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAYWETA0nJyGtI56zZa3KWFlXRhpV/CQ4EU9kz8Hln69 root@mirror-registry.abc.in'
+sshKey: 'ssh-abcdefZZZZ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxXXXXXXXXX/YYYYYYYYYYYYYY root@mirror-registry.abc.in'
 additionalTrustBundle: | 
   -----BEGIN CERTIFICATE-----
   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxXXXXXXXXXXXXXXXXXXXXXXXXX
