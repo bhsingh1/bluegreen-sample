@@ -55,6 +55,11 @@ imageContentSources:
 
 #----------------------------------------#
 
+Official Documentation
+https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html-single/installing_on_any_platform/index
+
+
+
 # 1. Generate Kubernetes manifests (optional tweaking happens here)
 openshift-install create manifests --dir=ocp-install
 
