@@ -1,0 +1,91 @@
+global
+    log         127.0.0.1 local2
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    daemon
+
+defaults
+    mode                    tcp
+    log                     global
+    option                  tcplog
+    option                  dontlognull
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 3000
+
+# ---------------------------------------------------------------------
+# OpenShift API Server (Port 6443)
+# Handles `oc` CLI commands and internal cluster communication
+# ---------------------------------------------------------------------
+frontend api-server
+    bind *:6443
+    default_backend api-backend
+
+backend api-backend
+    balance source
+    # The bootstrap node is required here ONLY during installation
+    server bootstrap 10.a.b.c:6443 check
+    server master1 10.x.y.z:6443 check
+    server master2 10.x.y.z:6443 check
+    server master3 10.x.y.z:6443 check
+
+# ---------------------------------------------------------------------
+# OpenShift Machine Config Server (Port 22623)
+# Serves Ignition files to nodes during boot
+# ---------------------------------------------------------------------
+frontend machine-config-server
+    bind *:22623
+    default_backend machine-config-backend
+
+backend machine-config-backend
+    balance source
+    # The bootstrap node is required here ONLY during installation
+    server bootstrap 10.a.b.c:22623 check
+    server master1 10.x.y.z:22623 check
+    server master2 10.x.y.z:22623 check
+    server master3 10.x.y.z:22623 check
+
+# ---------------------------------------------------------------------
+# OpenShift Ingress HTTP (Port 80)
+# Routes standard web traffic to the Worker nodes
+# ---------------------------------------------------------------------
+frontend ingress-http
+    bind *:80
+    default_backend ingress-http-backend
+
+backend ingress-http-backend
+    balance source
+    server worker1 10.x.y.z:80 check
+    server worker2 10.x.y.z:80 check
+    server worker3 10.x.y.z:80 check
+
+# ---------------------------------------------------------------------
+# OpenShift Ingress HTTPS (Port 443)
+# Routes secure web traffic (like your console and apps) to Workers
+# ---------------------------------------------------------------------
+frontend ingress-https
+    bind *:443
+    default_backend ingress-https-backend
+
+backend ingress-https-backend
+    balance source
+    server worker1 10.x.y.z:443 check
+    server worker2 10.x.y.z:443 check
+    server worker3 10.x.y.z:443 check
+
+
+#Run these commands
+#SELinux: If you are running this on RHEL/CentOS on your Bastion, you must tell SELinux to allow HAProxy to bind to these OpenShift ports.
+#Command 👇🏻
+# setsebool -P haproxy_connect_any 1
+
+#Post-Installation Cleanup: Once the installation finishes successfully, the Bootstrap VM is no longer needed. You should edit this file to comment out or delete the server bootstrap 10.228.43.192... lines in both the api-backend and machine-config-backend sections, then restart the service:
+
+# systemctl restart haproxy
+
