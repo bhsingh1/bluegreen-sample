@@ -1,0 +1,31 @@
+apiVersion: v1
+baseDomain: test.xyz.in
+compute:
+- hyperthreading: Enabled
+  name: worker
+  replicas: 3
+controlPlane:
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+metadata:
+  name: cluster
+networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  networkType: OVNKubernetes
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  none: {}
+pullSecret: '{"auths":{"quay-registry.xyz.in:8443":{"auth":"<base64_creds>"}}}'
+sshKey: 'ssh-rsa AAAAB3NzaC1... core@bastion'
+additionalTrustBundle: |
+  -----BEGIN CERTIFICATE-----
+  <Content of Quay Registry Root CA>
+  -----END CERTIFICATE-----
+imageContentSources:
+- mirrors:
+  - quay-registry.xyz.in:8443/init/openshift-release-dev
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
